@@ -1,17 +1,12 @@
 const express = require('express');
 const Bookmark = require('../models/Bookmark');
+const { verifyToken } = require('../firebaseAdmin/verifyToken'); // Import verifyToken from firebaseAdmin
 const router = express.Router();
 
 // Get bookmarks for a specific user
-router.get('/', async (req, res) => {
-  const { userId } = req.query;
-  
-  if (!userId) {
-    return res.status(400).json({ message: 'User ID is required' });
-  }
-
+router.get('/', verifyToken, async (req, res) => {
   try {
-    const bookmarks = await Bookmark.find({ userId }); // Filter by userId
+    const bookmarks = await Bookmark.find({ userId: req.user.uid }); // Use the user ID from the verified token
     res.status(200).json(bookmarks);
   } catch (error) {
     console.error(error);
@@ -20,16 +15,12 @@ router.get('/', async (req, res) => {
 });
 
 // Add a new bookmark for a specific user
-router.post('/', async (req, res) => {
-  const { id, title, poster_path, release_date, vote_average, userId } = req.body;
-
-  if (!userId) {
-    return res.status(400).json({ message: 'User ID is required' });
-  }
+router.post('/', verifyToken, async (req, res) => {
+  const { id, title, poster_path, release_date, vote_average } = req.body;
 
   try {
     // Check if the bookmark already exists for this specific user and movie ID
-    const existingBookmark = await Bookmark.findOne({ id, userId });
+    const existingBookmark = await Bookmark.findOne({ id, userId: req.user.uid });
     if (existingBookmark) {
       return res.status(400).json({ message: 'Bookmark with this ID already exists for this user' });
     }
@@ -41,7 +32,7 @@ router.post('/', async (req, res) => {
       poster_path,
       release_date,
       vote_average,
-      userId
+      userId: req.user.uid, // Use the user ID from the verified token
     });
 
     await newBookmark.save();
@@ -52,13 +43,12 @@ router.post('/', async (req, res) => {
   }
 });
 
-
 // Delete a bookmark by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
   try {
-    const bookmark = await Bookmark.findByIdAndDelete(req.params.id);
+    const bookmark = await Bookmark.findOneAndDelete({ _id: req.params.id, userId: req.user.uid });
     if (!bookmark) {
-      return res.status(404).json({ message: 'Bookmark not found' });
+      return res.status(404).json({ message: 'Bookmark not found or you do not have permission to delete it' });
     }
     res.status(200).json({ message: 'Bookmark deleted' });
   } catch (error) {

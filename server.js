@@ -6,8 +6,11 @@ const app = express();
 require('dotenv').config();
 
 app.use(express.json());
+
 app.use(cors({
-  origin: 'http://localhost:5173',  // Frontend origin
+  origin: 'http://localhost:5173', // Replace with your actual frontend domain
+  methods: ['GET', 'POST', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // Import routes
