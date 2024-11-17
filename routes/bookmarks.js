@@ -1,5 +1,5 @@
 const express = require('express');
-const Bookmark = require('../models/bookmark');
+const Bookmark = require('../models/Bookmark');
 const router = express.Router();
 
 // Get bookmarks for a specific user
