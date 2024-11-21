@@ -1,59 +1,70 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const Bookmark = require('../models/Bookmark');
-const { verifyToken } = require('../firebaseAdmin/verifyToken'); // Import verifyToken from firebaseAdmin
-const router = express.Router();
 
-// Get bookmarks for a specific user
+const router = express.Router();
+const JWT_SECRET = 'your_jwt_secret_key_here'; // Same as used in auth.js
+
+// Middleware to verify token
+const verifyToken = (req, res, next) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ message: 'Authentication required' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.userId = decoded.id;
+    next();
+  } catch (err) {
+    console.error('Invalid token:', err.message);
+    res.status(401).json({ message: 'Invalid or expired token' });
+  }
+};
+
+// Get all bookmarks for a user
 router.get('/', verifyToken, async (req, res) => {
   try {
-    const bookmarks = await Bookmark.find({ userId: req.user.uid }); // Use the user ID from the verified token
+    const bookmarks = await Bookmark.find({ userId: req.userId });
     res.status(200).json(bookmarks);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching bookmarks' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 });
 
-// Add a new bookmark for a specific user
+// Add a new bookmark
 router.post('/', verifyToken, async (req, res) => {
   const { id, title, poster_path, release_date, vote_average } = req.body;
 
   try {
-    // Check if the bookmark already exists for this specific user and movie ID
-    const existingBookmark = await Bookmark.findOne({ id, userId: req.user.uid });
-    if (existingBookmark) {
-      return res.status(400).json({ message: 'Bookmark with this ID already exists for this user' });
-    }
-
-    // If no existing bookmark for this user and movie, create a new one
-    const newBookmark = new Bookmark({
+    const bookmark = new Bookmark({
       id,
       title,
       poster_path,
       release_date,
       vote_average,
-      userId: req.user.uid, // Use the user ID from the verified token
+      userId: req.userId,
     });
-
-    await newBookmark.save();
-    res.status(201).json(newBookmark);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error adding bookmark' });
+    await bookmark.save();
+    res.status(201).json(bookmark);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 });
 
-// Delete a bookmark by ID
+// Delete a bookmark
 router.delete('/:id', verifyToken, async (req, res) => {
   try {
-    const bookmark = await Bookmark.findOneAndDelete({ _id: req.params.id, userId: req.user.uid });
+    const bookmark = await Bookmark.findOneAndDelete({ _id: req.params.id, userId: req.userId });
     if (!bookmark) {
-      return res.status(404).json({ message: 'Bookmark not found or you do not have permission to delete it' });
+      return res.status(404).json({ message: 'Bookmark not found' });
     }
     res.status(200).json({ message: 'Bookmark deleted' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error deleting bookmark' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 });
 

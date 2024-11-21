@@ -1,9 +1,9 @@
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json'); // Replace with your Firebase service account key file
+const firebaseAdmin = require('firebase-admin');
+const serviceAccount = require('../config/serviceAccountKey.json'); // Path to your Firebase serviceAccountKey.json
 
 // Initialize Firebase Admin SDK
-admin.initializeApp({
+firebaseAdmin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-module.exports = admin;
+module.exports = firebaseAdmin;

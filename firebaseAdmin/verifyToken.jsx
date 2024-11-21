@@ -1,5 +1,6 @@
 const admin = require('./firebaseAdmin');
 
+// Middleware to verify Firebase token
 const verifyToken = async (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
@@ -11,9 +12,9 @@ const verifyToken = async (req, res, next) => {
     const decodedToken = await admin.auth().verifyIdToken(token);
     req.user = decodedToken; // Attach user data to the request object
     next();
-  } catch (err) {
-    console.error(err);
-    res.status(401).send({ message: 'Invalid token' });
+  } catch (error) {
+    console.error('Error verifying token:', error.message);
+    res.status(401).send({ message: 'Invalid or expired token' });
   }
 };
 

@@ -9,20 +9,22 @@
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "��#\u0000 \u0000E\u0000n\u0000t\u0000e\u0000r\u0000t\u0000a\u0000i\u0000n\u0000m\u0000e\u0000n\u0000t\u0000-\u0000a\u0000p\u0000p\u0000-\u0000B\u0000a\u0000c\u0000k\u0000E\u0000n\u0000d\u0000\r\u0000 \u0000",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-validator": "^7.2.0",
     "firebase-admin": "^13.0.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.8.0"
+    "mongoose": "^8.8.2"
   },
   "devDependencies": {
     "jest": "^29.7.0",
     "nodemon": "^3.1.7",
     "supertest": "^7.0.0"
-  }
+  },
+  "keywords": []
 }

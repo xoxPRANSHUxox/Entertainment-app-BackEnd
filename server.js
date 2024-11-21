@@ -1,32 +1,20 @@
-// server.js
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const app = express();
-require('dotenv').config();
+const connectDB = require('./config/db');
+const authRoutes = require('./routes/auth');
+const bookmarkRoutes = require('./routes/bookmarks');
 
+const app = express();
+
+// Connect Database
+connectDB();
+
+// Middleware
 app.use(express.json());
 
-app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your actual frontend domain
-  methods: ['GET', 'POST', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/bookmarks', bookmarkRoutes);
 
-// Import routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/bookmarks', require('./routes/bookmarks'));
-
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
-  .catch((error) => console.error('MongoDB connection error:', error));
-
-// Start the server
+// Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
-
-module.exports = app;
-
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

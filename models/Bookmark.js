@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 
-// Define the Bookmark schema
-const bookmarkSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
+const BookmarkSchema = new mongoose.Schema({
+  id: { type: String, required: true },
   title: { type: String, required: true },
   poster_path: { type: String, required: true },
   release_date: { type: String },
   vote_average: { type: Number, required: true },
-  userId: { type: String, required: true }
-}, { timestamps: true });
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+});
 
-const Bookmark = mongoose.model('Bookmark', bookmarkSchema);
-module.exports = Bookmark;
+module.exports = mongoose.model('Bookmark', BookmarkSchema);
