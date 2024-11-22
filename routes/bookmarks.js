@@ -1,70 +1,61 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const Bookmark = require('../models/Bookmark');
-
 const router = express.Router();
-const JWT_SECRET = 'your_jwt_secret_key_here'; // Same as used in auth.js
 
-// Middleware to verify token
-const verifyToken = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-  if (!token) {
-    return res.status(401).json({ message: 'Authentication required' });
-  }
+// GET all bookmarks for a specific user
+router.get('/', async (req, res) => {
+  const { userId } = req.query;
+  if (!userId) return res.status(400).json({ message: 'User ID is required' });
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.userId = decoded.id;
-    next();
-  } catch (err) {
-    console.error('Invalid token:', err.message);
-    res.status(401).json({ message: 'Invalid or expired token' });
-  }
-};
-
-// Get all bookmarks for a user
-router.get('/', verifyToken, async (req, res) => {
-  try {
-    const bookmarks = await Bookmark.find({ userId: req.userId });
+    const bookmarks = await Bookmark.find({ userId });
     res.status(200).json(bookmarks);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Error fetching bookmarks:', err);
+    res.status(500).json({ message: 'Failed to fetch bookmarks' });
   }
 });
 
-// Add a new bookmark
-router.post('/', verifyToken, async (req, res) => {
-  const { id, title, poster_path, release_date, vote_average } = req.body;
+// POST a new bookmark
+router.post('/', async (req, res) => {
+  const { title, id, poster_path, release_date, vote_average, userId } = req.body;
 
   try {
-    const bookmark = new Bookmark({
+    const existingBookmark = await Bookmark.findOne({ id, userId });
+    if (existingBookmark) {
+      return res.status(400).json({ message: 'Bookmark already exists' });
+    }
+
+    const newBookmark = new Bookmark({
       id,
       title,
       poster_path,
       release_date,
       vote_average,
-      userId: req.userId,
+      userId,
     });
-    await bookmark.save();
-    res.status(201).json(bookmark);
+
+    await newBookmark.save();
+    res.status(201).json({ message: 'Bookmark added successfully', bookmark: newBookmark });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Error creating bookmark:', err);
+    res.status(500).json({ message: 'Failed to create bookmark' });
   }
 });
 
-// Delete a bookmark
-router.delete('/:id', verifyToken, async (req, res) => {
+// DELETE a bookmark by MongoDB's _id
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const bookmark = await Bookmark.findOneAndDelete({ _id: req.params.id, userId: req.userId });
-    if (!bookmark) {
+    const deletedBookmark = await Bookmark.findByIdAndDelete(id);
+    if (!deletedBookmark) {
       return res.status(404).json({ message: 'Bookmark not found' });
     }
-    res.status(200).json({ message: 'Bookmark deleted' });
+    res.status(200).json({ message: 'Bookmark deleted successfully' });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Error deleting bookmark:', err);
+    res.status(500).json({ message: 'Failed to delete bookmark' });
   }
 });
 
