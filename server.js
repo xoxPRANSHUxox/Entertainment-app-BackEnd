@@ -12,13 +12,17 @@ connectDB();
 app.use(express.json());
 
 // Enable CORS
-app.use(
-  cors({
-    origin:'https://entertainment-hlz9c6vnk-pranshus-projects-216b5991.vercel.app/', // Allow requests from your frontend
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
-    credentials: true, // Allow cookies to be sent with requests
-  })
-);
+// CORS configuration
+const corsOptions = {
+  origin: 'https://entertainment-app-xox.vercel.app', // Allow only your frontend domain
+  methods: ['GET', 'POST', 'DELETE', 'PUT'], // Add the methods you need
+  allowedHeaders: ['Content-Type', 'Authorization'], // If you're sending custom headers
+  credentials: true, // Allow cookies if needed
+};
+
+// Enable CORS with the above settings
+app.use(cors(corsOptions));
+
 
 // Routes
 app.use('/bookmarks', bookmarkRoutes);
