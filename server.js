@@ -14,7 +14,7 @@ app.use(express.json());
 // Enable CORS
 app.use(
   cors({
-    origin: 'http://localhost:5173' || 'https://entertainment-app-xox.vercel.app/', // Allow requests from your frontend
+    origin:'https://entertainment-app-xox.vercel.app/', // Allow requests from your frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
     credentials: true, // Allow cookies to be sent with requests
   })
