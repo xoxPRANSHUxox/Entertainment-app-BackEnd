@@ -1,17 +1,15 @@
 const mongoose = require('mongoose');
 
-const BookmarkSchema = new mongoose.Schema(
-  { 
-    id: { type: String, required: true },
-    title: { type: String, required: true }, // Title of the movie/show
-    poster_path: { type: String, required: true }, // URL for the poster image
-    release_date: { type: String }, // Release date of the movie/show
-    vote_average: { type: Number, required: true }, // Average vote/rating
-    userId: { type: String, required: true }, // Firebase user ID
-  },
-  {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
-  }
-);
+const bookmarkSchema = new mongoose.Schema({
+  id: { type: String, required: true }, // Movie ID
+  title: { type: String, required: true },
+  poster_path: { type: String },
+  release_date: { type: String },
+  vote_average: { type: Number },
+  userId: { type: String, required: true }, // User ID for the bookmark
+});
 
-module.exports = mongoose.model('Bookmark', BookmarkSchema);
+// Create a compound index to ensure unique combinations of id and userId
+bookmarkSchema.index({ id: 1, userId: 1 }, { unique: true });
+
+module.exports = mongoose.model('Bookmark', bookmarkSchema);

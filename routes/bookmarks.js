@@ -16,16 +16,22 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST a new bookmark
+// POST a new bookmark for a specific user
 router.post('/', async (req, res) => {
-  const { title, id, poster_path, release_date, vote_average, userId } = req.body;
+  const { id, title, poster_path, release_date, vote_average, userId } = req.body;
+
+  if (!userId || !id) {
+    return res.status(400).json({ message: 'User ID and Movie ID are required' });
+  }
 
   try {
+    // Check if the bookmark already exists for the specific user
     const existingBookmark = await Bookmark.findOne({ id, userId });
     if (existingBookmark) {
       return res.status(400).json({ message: 'Bookmark already exists' });
     }
 
+    // Create and save the new bookmark
     const newBookmark = new Bookmark({
       id,
       title,
@@ -42,6 +48,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: 'Failed to create bookmark' });
   }
 });
+
 
 // DELETE a bookmark by MongoDB's _id
 router.delete('/:id', async (req, res) => {
