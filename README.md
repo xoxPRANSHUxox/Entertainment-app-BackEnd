@@ -19,11 +19,18 @@ This repository contains the backend code for the Bookmark Management System, a 
 - **Firebase**: Set up Firebase Authentication
 
 ---
+## Routes
+/models        # Contains Mongoose schema for Bookmark
+/routes        # API routes for managing bookmarks
+/server.js     # Entry point for the application
 
-## Installation
+# Technologies Used
+Node.js: Server-side runtime
+Express.js: Framework for building APIs
+MongoDB: Database for storing bookmarks
+Firebase: Authentication provider
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/backend-bookmark-management.git
-   cd backend-bookmark-management
-
+# Future Enhancements
+Add endpoints for updating bookmark details.
+Implement pagination for fetching bookmarks.
+Include support for additional user preferences.
