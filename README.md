@@ -1,4 +1,4 @@
-﻿# Entertainment-app-BackEn
+﻿# Entertainment-app-BackEnd
 This repository contains the backend code for the Bookmark Management System, a web application that allows users to manage their favorite movies and TV shows. The backend is built with **Node.js** and **Express.js**, and it uses **MongoDB** as the database for storing user-specific bookmark data.
 
 ---
