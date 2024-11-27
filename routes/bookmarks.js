@@ -66,4 +66,9 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// 404 Error
+router.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
 module.exports = router;
