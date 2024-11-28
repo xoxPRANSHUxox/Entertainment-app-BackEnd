@@ -1,40 +1,34 @@
 const express = require('express');
 const cors = require('cors'); // Import CORS
-const connectDB = require('./config/db');
-const bookmarkRoutes = require('./routes/bookmarks');
-const path = require('path');
+const connectDB = require('./config/db'); // Import database connection
+const bookmarkRoutes = require('./routes/bookmarks'); // Import routes for bookmarks
+require('dotenv').config();
 
 const app = express();
 
-// Connect Database
+// Connect to the database
 connectDB();
 
 // Middleware
-app.use(express.json());
+app.use(express.json()); // To parse JSON bodies
+app.use(cors({
+  origin: 'https://entertainment-app-xox.vercel.app/', // Frontend domain (adjust for production)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+  credentials: true, // If you need to send cookies or credentials
+}));
 
-// Enable CORS
-// CORS configuration
-const corsOptions = {
-  origin: 'https://entertainment-app-xox.vercel.app', // Allow only your frontend domain
-  methods: ['GET', 'POST', 'DELETE', 'PUT'], // Add the methods you need
-  allowedHeaders: ['Content-Type', 'Authorization'], // If you're sending custom headers
-  credentials: true, // Allow cookies if needed
-};
+// Define routes
+app.use('/bookmarks', bookmarkRoutes); // Bookmark-related routes
 
-// Enable CORS with the above settings
-app.use(cors(corsOptions));
-
-
-// Routes
-app.use('/bookmarks', bookmarkRoutes);
-
-// 404 Page for unknown routes
-
-app.use((req, res, next) => {
-  res.status(404).sendFile(path.join(__dirname, '404.html'));
+// Error handling middleware (optional)
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ message: 'Something went wrong!' });
 });
 
-
-// Start Server
-const PORT = 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Start the server
+const PORT = process.env.PORT || 5000; // Use environment variable for port (default 5000)
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
