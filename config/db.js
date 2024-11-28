@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
+// Db connection Setup 
 const connectDB = async () => {
   try {
-    // DB_URL is being loaded correctly from the environment variables
     const dbUrl = 'mongodb+srv://Pranshu:Pranshu2002@entertainment-app.pzuon.mongodb.net/'
     if (!dbUrl) {
       console.error('MongoDB URL is not defined in the environment variables.');

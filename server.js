@@ -12,7 +12,7 @@ connectDB();
 // Middleware
 app.use(express.json()); // To parse JSON bodies
 app.use(cors({
-  origin: 'https://entertainment-app-xox.vercel.app/', // Frontend domain (adjust for production)
+  origin: 'https://entertainment-app-xox.vercel.app', // Updated frontend URL (without trailing slash)
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
   credentials: true, 

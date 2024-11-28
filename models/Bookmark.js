@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+// Bookmark Schema
 const bookmarkSchema = new mongoose.Schema({
   id: { type: String, required: true }, // Movie ID
   title: { type: String, required: true },
@@ -9,7 +9,7 @@ const bookmarkSchema = new mongoose.Schema({
   userId: { type: String, required: true }, // User ID for the bookmark
 });
 
-// Create a compound index to ensure unique combinations of id and userId
+// Creating a compound index to ensure unique combinations of id and userId
 bookmarkSchema.index({ id: 1, userId: 1 }, { unique: true });
 
 module.exports = mongoose.model('Bookmark', bookmarkSchema);
