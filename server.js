@@ -15,7 +15,7 @@ app.use(cors({
   origin: 'https://entertainment-app-xox.vercel.app/', // Frontend domain (adjust for production)
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-  credentials: true, // If you need to send cookies or credentials
+  credentials: true, 
 }));
 
 // Define routes
@@ -28,7 +28,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 5000; // Use environment variable for port (default 5000)
+const PORT = process.env.PORT || 5000; // environment variable for port (default 5000)
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
